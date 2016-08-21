@@ -44,14 +44,15 @@
 		user.drop_item()
 		B.forceMove(src)
 		held_brain = B
-		if(istype(O,/obj/item/organ/internal/brain/xeno)) // I'm not sure how well this will work now, since I don't think you can actually get xeno brains
+		if(istype(O,/obj/item/organ/internal/brain/xeno)) // kept the type check, as it still does other weird stuff
 			name = "Man-Machine Interface: Alien - [brainmob.real_name]"
 			icon = 'icons/mob/alien.dmi'
 			icon_state = "AlienMMI"
 			alien = 1
 		else
 			name = "Man-Machine Interface: [brainmob.real_name]"
-			icon_state = "mmi_full"
+			icon = B.mmi_icon
+			icon_state = "[B.mmi_icon_state]"
 			alien = 0
 		feedback_inc("cyborg_mmis_filled",1)
 
@@ -178,3 +179,25 @@
 	name = "Syndicate Man-Machine Interface"
 	desc = "Syndicate's own brand of MMI. It enforces laws designed to help Syndicate agents achieve their goals upon cyborgs created with it, but doesn't fit in Nanotrasen AI cores."
 	syndiemmi = 1
+
+/obj/item/device/mmi/attempt_become_organ(obj/item/organ/external/parent,mob/living/carbon/human/H)
+	if(!brainmob)
+		return 0
+	if(!parent)
+		log_debug("Attempting to insert into a null parent!")
+		return 0
+	if(H.get_int_organ(/obj/item/organ/internal/brain))
+		// one brain at a time
+		return 0
+	var/obj/item/organ/internal/brain/mmi_holder/holder = new()
+	holder.parent_organ = parent.limb_name
+	forceMove(holder)
+	holder.stored_mmi = src
+	holder.update_from_mmi()
+	if(istype(src, /obj/item/device/mmi/posibrain))
+		holder.robotize()
+	if(brainmob && brainmob.mind)
+		brainmob.mind.transfer_to(H)
+	holder.insert(H)
+
+	return 1

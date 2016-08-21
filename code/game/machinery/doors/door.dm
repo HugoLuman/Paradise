@@ -45,11 +45,13 @@
 			bound_width = world.icon_size
 			bound_height = width * world.icon_size
 
-	air_update_turf(1)
 	update_freelook_sight()
 	airlocks += src
 	return
 
+/obj/machinery/door/initialize()
+	air_update_turf(1)
+	..()
 
 /obj/machinery/door/Destroy()
 	density = 0
@@ -60,11 +62,11 @@
 
 /obj/machinery/door/Bumped(atom/AM)
 	if(p_open || operating) return
-	if(ismob(AM))
-		var/mob/M = AM
+	if(isliving(AM))
+		var/mob/living/M = AM
 		if(world.time - M.last_bumped <= 10) return	//Can bump-open one airlock per second. This is to prevent shock spam.
 		M.last_bumped = world.time
-		if(!M.restrained() && !M.small)
+		if(!M.restrained() && M.mob_size > MOB_SIZE_SMALL)
 			bumpopen(M)
 		return
 
@@ -299,3 +301,11 @@
 
 /obj/machinery/door/morgue
 	icon = 'icons/obj/doors/doormorgue.dmi'
+
+/obj/machinery/door/proc/hostile_lockdown(mob/origin)
+	if(!stat) //So that only powered doors are closed.
+		close() //Close ALL the doors!
+
+/obj/machinery/door/proc/disable_lockdown()
+	if(!stat) //Opens only powered doors.
+		open() //Open everything!

@@ -386,6 +386,16 @@ to destroy them and players will be able to make replacements.
 							/obj/item/stack/cable_coil = 5,
 							/obj/item/weapon/stock_parts/console_screen = 1)
 
+/obj/item/weapon/circuitboard/deepfryer
+	name = "circuit board (Deep Fryer)"
+	build_path = /obj/machinery/cooker/deepfryer
+	board_type = "machine"
+	origin_tech = "programming=2"
+	frame_desc = "Requires 2 Micro Lasers and 5 pieces of cable."
+	req_components = list(
+							/obj/item/weapon/stock_parts/micro_laser = 2,
+							/obj/item/stack/cable_coil = 5)
+
 /obj/item/weapon/circuitboard/gibber
 	name = "circuit board (Gibber)"
 	build_path = /obj/machinery/gibber
@@ -698,6 +708,17 @@ obj/item/weapon/circuitboard/rdserver
 							/obj/item/weapon/stock_parts/capacitor = 2,
 							/obj/item/weapon/stock_parts/console_screen = 1)
 
+/obj/item/weapon/circuitboard/teleporter_perma
+	name = "circuit board (Permanent Teleporter)"
+	build_path = /obj/machinery/teleport/perma
+	board_type = "machine"
+	origin_tech = "programming=3;engineering=5;bluespace=5;materials=4"
+	frame_desc = "Requires 3 Bluespace Crystals and 1 Matter Bin."
+	req_components = list(
+							/obj/item/weapon/ore/bluespace_crystal = 3,
+							/obj/item/weapon/stock_parts/matter_bin = 1)
+	var/target
+
 /obj/item/weapon/circuitboard/telesci_pad
 	name = "Circuit board (Telepad)"
 	build_path = /obj/machinery/telepad
@@ -721,16 +742,6 @@ obj/item/weapon/circuitboard/rdserver
 							/obj/item/weapon/stock_parts/matter_bin = 1,
 							/obj/item/weapon/stock_parts/manipulator = 1,
 							/obj/item/stack/cable_coil = 1,
-							/obj/item/weapon/stock_parts/console_screen = 2)
-
-/obj/item/weapon/circuitboard/sleep_console
-	name = "circuit board (Sleeper Console)"
-	build_path = /obj/machinery/sleep_console
-	board_type = "machine"
-	origin_tech = "programming=3;biotech=2;engineering=3;materials=3"
-	frame_desc = "Requires 2 pieces of cable and 2 Console Screens."
-	req_components = list(
-							/obj/item/stack/cable_coil = 2,
 							/obj/item/weapon/stock_parts/console_screen = 2)
 
 /obj/item/weapon/circuitboard/bodyscanner

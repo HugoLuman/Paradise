@@ -92,6 +92,16 @@
 	build_path = /obj/item/weapon/circuitboard/teleporter_station
 	category = list ("Teleportation Machinery")
 
+/datum/design/teleport_perma
+	name = "Machine Board (Permanent Teleporter)"
+	desc = "Allows for the construction of circuit boards used to build a Permanent Teleporter."
+	id = "tele_perma"
+	req_tech = list("programming" = 3, "bluespace" = 5, "materials" = 4, "engineering" = 5)
+	build_type = IMPRINTER
+	materials = list(MAT_GLASS = 1000, "sacid" = 20)
+	build_path = /obj/item/weapon/circuitboard/teleporter_perma
+	category = list ("Teleportation Machinery")
+
 /datum/design/bodyscanner
 	name = "Machine Board (Body Scanner)"
 	desc = "Allows for the construction of circuit boards used to build a Body Scanner."
@@ -180,16 +190,6 @@
 	build_type = IMPRINTER
 	materials = list(MAT_GLASS = 1000, "sacid" = 20)
 	build_path = /obj/item/weapon/circuitboard/sleeper
-	category = list("Medical Machinery")
-
-/datum/design/sleep_console
-	name = "Machine Board (Sleeper Console)"
-	desc = "Allows for the construction of circuit boards used to build a Sleeper Console."
-	id = "sleeper_console"
-	req_tech = list("programming" = 3, "biotech" = 2, "materials" = 3, "engineering" = 3)
-	build_type = IMPRINTER
-	materials = list(MAT_GLASS = 1000, "sacid" = 20)
-	build_path = /obj/item/weapon/circuitboard/sleep_console
 	category = list("Medical Machinery")
 
 /datum/design/biogenerator
@@ -420,6 +420,16 @@
 	build_type = IMPRINTER
 	materials = list(MAT_GLASS = 1000, "sacid" = 20)
 	build_path = /obj/item/weapon/circuitboard/candy_maker
+	category = list("Misc. Machinery")
+
+/datum/design/deepfryer
+	name = "Machine Board (Deep Fryer)"
+	desc = "The circuit board for a Deep Fryer."
+	id = "deepfryer"
+	req_tech = list("programming" = 2)
+	build_type = IMPRINTER
+	materials = list(MAT_GLASS = 1000, "sacid" = 20)
+	build_path = /obj/item/weapon/circuitboard/deepfryer
 	category = list("Misc. Machinery")
 
 /datum/design/orion_trail
