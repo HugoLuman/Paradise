@@ -163,29 +163,30 @@
 	..()
 	processing_objects.Add(src)
 
-/obj/item/weapon/holder/Destroy()
+/obj/item/organ/internal/brain/yinslug/Destroy()
 	processing_objects.Remove(src)
 	return ..()
 
 /obj/item/organ/internal/brain/yinslug/process()
-    if(isturf(loc) && !owner)
-        for(var/mob/M in contents)
-            M.forceMove(get_turf(src))
-        qdel(src)
+	if(isturf(loc) && !owner)
+		for(var/mob/M in contents)
+			M.forceMove(get_turf(src))
+			M.reset_view()
+		qdel(src)
 
 /obj/item/organ/internal/brain/yinslug/remove(var/mob/living/user,special = 0)
-    spawn(1)
-        if(!special)
-            var/mob/living/simple_animal/yin/Pilot = new /mob/living/simple_animal/yin(loc)
-            if(owner.mind)
-                Pilot.cached_dna = src.dna.Clone()
-                Pilot.real_name = "[Pilot.cached_dna.real_name]"
-                Pilot.name = "[Pilot.real_name]"
-                Pilot.adjustBruteLoss(0.5*src.damage)
-                owner.mind.transfer_to(Pilot)
-                Pilot.loc = get_turf(src)
-        ..()
-        qdel(src)
+	spawn(1)
+		if(!special)
+			var/mob/living/simple_animal/yin/Pilot = new /mob/living/simple_animal/yin(loc)
+			if(owner.mind)
+				Pilot.cached_dna = src.dna.Clone()
+				Pilot.real_name = "[Pilot.cached_dna.real_name]"
+				Pilot.name = "[Pilot.real_name]"
+				Pilot.adjustBruteLoss(0.5*src.damage)
+				owner.mind.transfer_to(Pilot)
+				Pilot.loc = get_turf(src)
+		..()
+		qdel(src)
 
 /obj/item/organ/internal/brain/yinslug/attackby(obj/item/weapon/W as obj, mob/user as mob, params)
 	for(var/mob/M in src.contents)
@@ -204,9 +205,11 @@
 		M.ex_act(intensity)
 
 /obj/item/organ/internal/brain/yinslug/insert()
-	for(var/mob/living/Pilot in contents)
-		Pilot.mind.transfer_to(owner)
-		owner.adjustBrainLoss((60 - src.health)*2)
+	..()
+	for(var/mob/living/YI in contents)
+		YI.mind.transfer_to(owner)
+		owner.adjustBrainLoss((60 - YI.health)*2)
+		qdel(YI)
 
 /obj/item/organ/internal/brain/yinslug/container_resist(var/mob/living/L)
 	var/mob/M = src.loc                      //Get our mob holder (if any).

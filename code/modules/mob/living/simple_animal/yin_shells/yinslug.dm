@@ -15,6 +15,8 @@
 	small = 1
 	can_hide = 1
 	ventcrawler = 2
+	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_tox" = 0, "max_tox" = 5, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
+	minbodytemp = 0
 
 	maxHealth = 60
 	health = 60
@@ -85,6 +87,14 @@
 
 	..(act, m_type, message)
 
+/mob/living/simple_animal/yin/resist() // To enable escape from dead shells, without automatically kicking them out
+	..()
+	if(istype(loc,/mob/living/simple_animal/yin_shell))
+		var/mob/living/simple_animal/yin_shell/MH = loc
+		to_chat(src, "You wriggle out of the [loc] shell.")
+		MH.pilot = null
+		MH.name = MH.real_name
+		forceMove(get_turf(MH))
 
 /mob/living/simple_animal/yin/verb/enter_shell()
 	set category = "Animal"
@@ -104,49 +114,74 @@
 			continue
 		if(H.stat == DEAD && src.Adjacent(H) && species == "Yin")
 			choices += H
+	for(var/mob/living/simple_animal/yin_shell/S in view(1,src))
+		if(!S.pilot)
+			choices += S
 
-	var/mob/living/carbon/human/M = input(src,"Which shell do you wish to enter?") in null|choices
+	var/mob/living/M = input(src,"Which shell do you wish to enter?") in null|choices
 
-	if(!M || !src) return
-
-	if(!(src.Adjacent(M))) return
-
-	if(M.getBrainLoss()<200)
-		to_chat(src, "This shell already has someone inside!")
+	if(!M || !src)
 		return
 
-	to_chat(src, "You begin climbing into the empty control pod in [M]'s head...")
+	if(!(src.Adjacent(M)))
+		return
+
+	if(istype(M,/mob/living/carbon/human))
+		var/mob/living/carbon/human/MH = M
+		if(MH.getBrainLoss()<200)
+			to_chat(src, "This shell already has someone inside!")
+			return
+		to_chat(src, "You begin climbing into the empty control pod in [MH]'s head...")
+
+	if(istype(M,/mob/living/simple_animal/yin_shell))
+		var/mob/living/simple_animal/yin_shell/MS = M
+		if(MS.pilot)
+			to_chat(src, "This shell already has someone inside!")
+			return
+		to_chat(src, "You begin climbing into the empty control pod of the [MS]...")
 
 	if(!do_after(src,20, target = M))
 		to_chat(src, "As [M] moves away, you are dislodged and fall to the ground.")
 		return
 
-	if(!M || !src) return
+	if(!M || !src)
+		return
 
 	if(src.stat)
 		to_chat(src, "You cannot climb into a shell in your current state.")
 		return
 
-	if(M.stat != DEAD)
-		to_chat(src, "That is not an appropriate target.")
-		return
+	if(istype(M,/mob/living/carbon/human))
+		var/mob/living/carbon/human/MH = M
+		if(MH.stat != DEAD)
+			to_chat(src, "That is not an appropriate target.")
+			return
 
 	if(M in view(1, src))
 		to_chat(src, "You enter the control pod of the [M] shell")
-
-		var/obj/item/organ/internal/brain/Y = new /obj/item/organ/internal/brain/yinslug(M)
-		Y.set_dna(cached_dna)
-		M.internal_organs |= Y
-		Y.insert(M)
-		mind.transfer_to(M)
-		M.adjustBrainLoss((60 - src.health)*2)
-		qdel(src)
+		if(istype(M,/mob/living/carbon/human))
+			var/mob/living/carbon/human/MH = M
+			var/obj/item/organ/internal/brain/Y = new /obj/item/organ/internal/brain/yinslug(MH)
+			Y.set_dna(cached_dna)
+			MH.internal_organs |= Y
+			Y.insert(MH)
+			mind.transfer_to(MH)
+			MH.adjustBrainLoss((60 - src.health)*2)
+			qdel(src)
+		else if(istype(M,/mob/living/simple_animal/yin_shell))
+			var/mob/living/simple_animal/yin_shell/MS = M
+			loc = MS
+			if(MS.stat != DEAD)
+				MS.pilot = src
+				mind.transfer_to(MS)
+				MS.name = "[MS.name] [real_name]"
+				MS.resting = 0
 		return
 	else
 		to_chat(src, "They are no longer in range!")
 		return
 /*
-/mob/living/simple_animal/yinslug/proc/perform_entrance(var/mob/living/carbon/M)
+/mob/living/simple_animal/yinslug/proc/perform_entrance(var/mob/living/silicon/M)
 	src.host = M
 	src.forceMove(M)
 
@@ -156,49 +191,3 @@
 		head.implants += src
 
 	host.status_flags |= PASSEMOTES */
-
-/////////////////////////////////////////////////////
-/////////// Invasion Shells   ///////////////////////
-/////////////////////////////////////////////////////
-
-/mob/living/silicon/robot/yinvader
-	icon = 'icons/mob/yin_pilot.dmi'
-	base_icon = "invader"
-	icon_state = "invader"
-	lawupdate = 0
-	scrambledcodes = 1
-	modtype = "Invader"
-	faction = list("yin")
-	designation = "Yin Invader"
-	req_access = list(access_yin)
-	var/searching_for_ckey = 0
-
-/mob/living/silicon/robot/yinvader/New(loc)
-	..()
-	cell.maxcharge = 50000
-	cell.charge = 50000
-
-/mob/living/silicon/robot/yinvader/init()
-	laws = new /datum/ai_laws/deathsquad
-	module = new /obj/item/weapon/robot_module/yinvader(src)
-
-	aiCamera = new/obj/item/device/camera/siliconcam/robot_camera(src)
-	radio = new /obj/item/device/radio/borg/deathsquad(src)
-	radio.recalculateChannels()
-
-	playsound(loc, 'sound/mecha/nominalsyndi.ogg', 75, 0)
-
-/obj/item/weapon/robot_module/yinvader
-	name = "Yin Combat Module"
-	module_type = "Malf"
-
-/obj/item/weapon/robot_module/yinvader/New()
-	src.modules += new /obj/item/device/flash/cyborg(src)
-	src.modules += new /obj/item/borg/sight/thermal(src)
-	src.modules += new /obj/item/weapon/melee/energy/sword/cyborg(src)
-	src.modules += new /obj/item/weapon/gun/energy/pulse_rifle/cyborg(src)
-	src.modules += new /obj/item/weapon/tank/jetpack/carbondioxide(src)
-	src.modules += new /obj/item/weapon/crowbar(src)
-	src.emag = null
-
-	fix_modules()

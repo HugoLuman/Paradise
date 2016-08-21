@@ -44,7 +44,7 @@
 	death_message = "stops moving, their pneumatics falling silent as the indicator lights dim out across their body..."
 
 	species_abilities = list(
-		/mob/living/carbon/human/yin/proc/eject_from_body
+		/mob/living/carbon/human/proc/eject_from_body
 		)
 
 	cold_level_1 = 50
@@ -57,16 +57,17 @@
 	heat_level_3_breathe = 600
 
 /datum/species/yin/handle_life(var/mob/living/carbon/human/H)
-	var/rads = H.radiation/25
+	var/rads = H.radiation/10
 	H.adjustBrainLoss(rads)
 
-/mob/living/carbon/human/yin/proc/eject_from_body()
+/mob/living/carbon/human/proc/eject_from_body()
 	set category = "Abilities"
 	set name = "Eject from shell"
 	set desc = "Eject from your humanoid mechanical shell."
 
 	var/obj/item/organ/internal/E = get_int_organ(/obj/item/organ/internal/brain/yinslug)
 	if(E)
-		E.forceMove(get_turf(src))
 		E.remove(usr)
+		E.forceMove(get_turf(src))
 		playsound(src, 'sound/mecha/mechmove03.ogg', 40, 1, 1)
+	else to_chat(src, "You are not actually a Yin! You'd die if you ejected your brain")
