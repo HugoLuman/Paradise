@@ -490,7 +490,7 @@
 /datum/species/proc/handle_death(var/mob/living/carbon/human/H) //Handles any species-specific death events (such as dionaea nymph spawns).
 	return
 
-/datum/species/proc/handle_attack_hand(var/mob/living/carbon/human/H, var/mob/living/carbon/human/M) //Handles any species-specific attackhand events.
+/datum/species/proc/handle_attack_hand(var/mob/living/carbon/human/H, var/mob/living/carbon/human/M, gibbed = 0) //Handles any species-specific attackhand events.
 	return
 
 /datum/species/proc/say_filter(mob/M, message, datum/language/speaking)

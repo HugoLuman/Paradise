@@ -110,6 +110,12 @@
 /mob/living/carbon/human/diona/New(var/new_loc)
 	..(new_loc, "Diona")
 
+/mob/living/carbon/human/yin/New(var/new_loc)
+	..(new_loc, "Yin")
+
+/mob/living/carbon/human/yinslaved/New(var/new_loc)
+	..(new_loc, "Yin slave")
+
 /mob/living/carbon/human/machine/New(var/new_loc)
 	..(new_loc, "Machine")
 

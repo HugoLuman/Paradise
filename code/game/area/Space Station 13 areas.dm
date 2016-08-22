@@ -1,16 +1,12 @@
 /*
-
 ### This file contains a list of all the areas in your station. Format is as follows:
-
 /area/CATEGORY/OR/DESCRIPTOR/NAME 	(you can make as many subdivisions as you want)
 	name = "NICE NAME" 				(not required but makes things really nice)
 	icon = "ICON FILENAME" 			(defaults to areas.dmi)
 	icon_state = "NAME OF ICON" 	(defaults to "unknown" (blank))
 	requires_power = 0 				(defaults to 1)
 	music = "music/music.ogg"		(defaults to "music/music.ogg")
-
 NOTE: there are two lists of areas in the end of this file: centcom and station itself. Please maintain these lists valid. --rastaf0
-
 */
 
 
@@ -1737,7 +1733,6 @@ area/security/podbay
 /*
 	New()
 		..()
-
 		spawn(10) //let objects set up first
 			for(var/turf/turfToGrayscale in src)
 				if(turfToGrayscale.icon)
@@ -2389,6 +2384,14 @@ area/security/podbay
 	name = "\improper Telecoms Power Control"
 	icon_state = "tcomsatwest"
 
+//////// Yin ////////////
+
+/area/shuttle/yin
+	name = "\improper Yin Warship"
+	icon_state = "shuttle"
+	requires_power = 0
+
+
 // Away Missions
 /area/awaymission
 	name = "\improper Strange Location"
@@ -2672,3 +2675,4 @@ var/list/the_station_areas = list (
 	/area/turret_protected/ai_upload_foyer,
 	/area/turret_protected/ai,
 )
+
