@@ -36,6 +36,14 @@
 	robotize("Yin")
 	..()
 
+/*/obj/item/organ/external/head/yin/insert(mob/living/carbon/M, special = 0)
+	..()
+	M.verbs |= /mob/living/carbon/human/proc/eject_from_body
+
+/obj/item/organ/external/head/yin/remove(mob/living/carbon/M, special = 0)
+	..()
+	M.verbs -= /mob/living/carbon/human/proc/eject_from_body */
+
 /obj/item/organ/external/chest/yin
 	encased = null
 	status = ORGAN_ROBOT
@@ -158,10 +166,24 @@
 	vital = 1
 	max_damage = 200
 	slot = "brain"
+	var/mob/living/simple_animal/yin/mypilot
+
+/obj/item/organ/internal/brain/yinslug/proc/generate_pilot()
+	spawn(1)
+		var/mob/living/simple_animal/yin/Pilot = new /mob/living/simple_animal/yin(src, special = 1)
+		Pilot.mybrain = src
+		Pilot.loc = src
+		mypilot = Pilot
+		Pilot.cached_dna = src.dna.Clone()
+		Pilot.real_name = "[owner.real_name]"
+		Pilot.name = "[owner.real_name]"
+
 
 /obj/item/organ/internal/brain/yinslug/New()
 	..()
 	processing_objects.Add(src)
+	if(!mypilot)
+		generate_pilot()
 
 /obj/item/organ/internal/brain/yinslug/Destroy()
 	processing_objects.Remove(src)
@@ -170,8 +192,32 @@
 /obj/item/organ/internal/brain/yinslug/insert()
 	..()
 	owner.stat = CONSCIOUS
+	owner.internal_organs |= src
+	spawn(1)
+		mypilot.heal_overall_damage(1000, 1000)
+		mypilot.ExtinguishMob()
 
 /obj/item/organ/internal/brain/yinslug/remove(var/mob/living/user,special = 3)
+	. = mypilot
+	var/mob/living/carbon/human/H = owner
+	if(special == 3)
+		if(owner.mind)
+			mypilot.loc = get_turf(src)
+			mypilot.adjustBruteLoss(0.5*src.damage)
+			mypilot.updatehealth()
+	if(special == 2) // For when the humanoid shell dies and the worm is left sitting in the body
+		if(owner.mind)
+			mypilot.adjustBruteLoss(0.5*src.damage)
+			mypilot.loc = owner
+			owner.internal_organs -= src //Apparently
+	spawn(1)
+		..()
+		H.mind.transfer_to(mypilot)
+		//H.updatehealth()
+		src.loc = mypilot
+
+
+/*/obj/item/organ/internal/brain/yinslug/remove(var/mob/living/user,special = 3)
 	var/mob/living/simple_animal/yin/Pilot = new /mob/living/simple_animal/yin(src)
 	Pilot.loc = get_turf(owner)
 	. = Pilot
@@ -193,7 +239,7 @@
 			owner.mind.transfer_to(Pilot)
 	spawn(1)
 		..()
-		qdel(src)
+		qdel(src) */
 
 
 /obj/item/weapon/holder/yin

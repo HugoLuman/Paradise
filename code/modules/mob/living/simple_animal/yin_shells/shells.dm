@@ -19,7 +19,7 @@
 	maxHealth = 200
 	density = 1
 	speed = 0
-	a_intent = I_HARM
+	a_intent = INTENT_HARM
 	stop_automated_movement = 1
 	status_flags = CANPUSH
 	has_limbs = 0

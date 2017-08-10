@@ -43,7 +43,7 @@
 /obj/structure/yinpipe/ex_act()
 	return
 
-/obj/machinery/gun_turret/yin
+/*/obj/machinery/gun_turret/yin
 	name = "plasma turret"
 	desc = "An eye-shaped device that fires beams of plasma."
 	density = 1
@@ -53,7 +53,7 @@
 	firing_sound = 'sound/weapons/emitter2.ogg'
 	icon = 'icons/obj/yin.dmi'
 	icon_state = "eyeturret0"
-	base_icon = "eyeturret"
+	base_icon = "eyeturret" */
 
 /obj/item/projectile/plasma/yin
 	name = "plasma blast"
